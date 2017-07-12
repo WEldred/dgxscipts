@@ -9,7 +9,7 @@ DIGITS_ENV_FILE="$HOME/digits/digits-env.sh"
 DIGITS_PORT="5000"
 
 # DIGITS work around for multi-gpu issue in 17.05
-DIGITS_WORKAROUND=" "
+DIGITS_WORKAROUND="--shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864"
 
 # General host and user information
 IPADDRESS=`hostname -i`
@@ -17,21 +17,25 @@ MYUID=`id -u $USER`
 MYGID=`id -g $USER`
 CONTAINER_NAME="$USER-digits"
 
-# Map additional local directories to be mounted in container
+# Set up container uid/gid for proper process permissions - otherwise container run with wrong permissions and files not accessible
+USER_CMD="-u $MYUID:$MYGID"
 
+# Map additional local directories to be mounted in container
 # User Home Directory
 MOUNT_CMD="-v $HOME:$HOME " 
 
 # Add additional directories
 # Example: Mount /data into container as /data
 #MOUNT_CMD+="-v /data:/data "
-
 # General format
 #MOUNT_CMD+="-v <local dir>:<container dir> "
 
 # Expose container port to system so users can access service.  Maps DIGITS port 5000 to specified port.
 # Change port number above if running multiple copies of DIGITS
 PORT_CMD="-p 5000:$PORT "
+
+# Setup environment variable so DIGITs can find DIGITS directory
+DIGITS_ENV_CMD="--env-file=$DIGITS_ENV_FILE"
 
 # Welcome
 echo " "
@@ -49,7 +53,7 @@ echo " docker rm $CONTAINER_NAME"
 echo " "
 
 # run docker
-CMD="nvidia-docker run --name $CONTAINER_NAME -u $MYUID:$MYGID $PORTS $PORT_CMD $MOUNT_CMD $DIGITS_WORKAROUND -i -ti $DIGITS_CONTAINER:$DIGITS_CONTAINER_VER"
+CMD="nvidia-docker run --name $CONTAINER_NAME $USER_CMD $PORTS $PORT_CMD $MOUNT_CMD $DIGITS_ENV_CMD $DIGITS_WORKAROUND --rm -ti $DIGITS_CONTAINER:$DIGITS_CONTAINER_VER"
 echo "Running: $CMD"
 $rc = `$CMD`
 
