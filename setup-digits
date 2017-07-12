@@ -1,0 +1,47 @@
+#! /bin/bash
+
+# Simple script to setup basics digits usage
+
+# Display Welcome Message
+
+echo " "
+echo "SETUP-DIGITS - v0.1"
+echo " "
+echo "Overview:"
+echo "  The following is a simple script to create a base set of directories to work with the NVIDIA DGX DIGITS container."
+echo " "
+
+echo "Info:"
+echo "  Setting up the following directory structure:"
+echo " "
+echo "  $HOME"
+echo "  \\"
+echo "   digits/              - main digits directory"
+echo "    \\"
+echo "     digits-env.sh      - environment setup script"
+echo "     data/              - directory to store data in"
+echo "     jobs/              - directory with job information"
+echo "     logs/              - directory with DIGITS log file"
+
+# Setup directories
+
+echo " "
+echo "Setting Up Directories:"
+echo " mkdir $HOME/digits"
+mkdir $HOME/digits
+echo " mkdir $HOME/digits/data"
+mkdir $HOME/digits/data
+echo " mkdir $HOME/digits/jobs"
+mkdir $HOME/digits/jobs
+echo " mkdir $HOME/digits/logs"
+mkdir $HOME/digits/logs
+
+# create env file
+echo " "
+echo "Createing environment variable file:"
+echo "cat $HOME/digits/digits-env.sh"
+echo "DIGITS_JOB_FILE=$HOME/digits/jogs" >> $HOME/digits/digits-env.sh
+echo "DIGITS_LOGFILE_FILENAME=$HOME/digits/logs/digits.log" >> $HOME/digits/digits-env.sh
+cat $HOME/digits/digits-env.sh
+
+exit 0
