@@ -1,0 +1,55 @@
+#! /bin/bash
+
+# Simple script to set appropriate parameters and start digits
+
+# Set DIGITS container and port info here
+DIGITS_CONTAINER="nvcr.io/nvidia/digits"
+DIGITS_CONTAINER_VER="17.06"
+DIGITS_ENV_FILE="$HOME/digits/digits-env.sh"
+DIGITS_PORT="5000"
+
+# DIGITS work around for multi-gpu issue in 17.05
+DIGITS_WORKAROUND=" "
+
+# General host and user information
+IPADDRESS=`hostname -i`
+MYUID=`id -u $USER`
+MYGID=`id -g $USER`
+CONTAINER_NAME="$USER-digits"
+
+# Map additional local directories to be mounted in container
+
+# User Home Directory
+MOUNT_CMD="-v $HOME:$HOME " 
+
+# Add additional directories
+# Example: Mount /data into container as /data
+#MOUNT_CMD+="-v /data:/data "
+
+# General format
+#MOUNT_CMD+="-v <local dir>:<container dir> "
+
+# Expose container port to system so users can access service.  Maps DIGITS port 5000 to specified port.
+# Change port number above if running multiple copies of DIGITS
+PORT_CMD="-p 5000:$PORT "
+
+# Welcome
+echo " "
+echo "Simple DIGITS Start Script - v0.1"
+echo " "
+echo "To connect to DIGITS, specify the following URL in your browser:"
+echo " "
+echo " http://"$IPADDRESS":5000/"
+echo " "
+echo "Docker commands to control container:"
+echo " "
+echo " docker ps -a"
+echo " docker stop $CONTAINER_NAME"
+echo " docker rm $CONTAINER_NAME"
+echo " "
+
+# run docker
+CMD="nvidia-docker run --name $CONTAINER_NAME -u $MYUID:$MYGID $PORTS $PORT_CMD $MOUNT_CMD $DIGITS_WORKAROUND -i -ti $DIGITS_CONTAINER:$DIGITS_CONTAINER_VER"
+echo "Running: $CMD"
+$rc = `$CMD`
+
